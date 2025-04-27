@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laboratory12", "Laboratory12\Laboratory12.csproj", "{FF014E0D-3E25-4C83-8F44-AE42D76B3AF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarLibrary", "CarLibrary\CarLibrary.csproj", "{74BE20CB-BFAE-47AE-B737-668C556E8760}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{1BCB3E40-A0D9-466C-9974-751EDEEB4B2B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FF014E0D-3E25-4C83-8F44-AE42D76B3AF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF014E0D-3E25-4C83-8F44-AE42D76B3AF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF014E0D-3E25-4C83-8F44-AE42D76B3AF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF014E0D-3E25-4C83-8F44-AE42D76B3AF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74BE20CB-BFAE-47AE-B737-668C556E8760}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74BE20CB-BFAE-47AE-B737-668C556E8760}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74BE20CB-BFAE-47AE-B737-668C556E8760}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74BE20CB-BFAE-47AE-B737-668C556E8760}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BCB3E40-A0D9-466C-9974-751EDEEB4B2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BCB3E40-A0D9-466C-9974-751EDEEB4B2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BCB3E40-A0D9-466C-9974-751EDEEB4B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BCB3E40-A0D9-466C-9974-751EDEEB4B2B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
