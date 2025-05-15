@@ -23,38 +23,29 @@ namespace Car
 
         public int Count => count;
 
-        // Извлекаем ‑ключ из объекта
+        // Извлекаем ключ из объекта по свойству CarId
         private object GetKey(T item)
         {
-            var prop = item.GetType().GetProperty("CarId") ??
-                       item.GetType().GetProperty("Id");
-            if (prop != null)
-            {
-                var val = prop.GetValue(item)!;
-                // Если это IdNumber, отдаём сам объект
-                if (val is IdNumber) return val;
-            }
-            // В остальных случаях — сам объект
-            return item!;
+            return ((Car)(object)item).CarId;
         }
 
-        // Хешируем именно ключ
+        // Хешируем именно ключ (CarId)
         private int GetIndex(object key)
             => Math.Abs(key.GetHashCode()) % size;
 
         public void Add(T item)
         {
-            var key   = GetKey(item);
-            int idx   = GetIndex(key);
-            var node  = new Point<T>(item);
+            var key = GetKey(item);
+            int index = GetIndex(key);
+            var node = new Point<T>(item);
 
-            if (table[idx] == null)
-                table[idx] = node;
+            if (table[index] == null)
+                table[index] = node;
             else
             {
-                var cur = table[idx];
-                while (cur.Next != null) cur = cur.Next;
-                cur.Next = node;
+                var current = table[index];
+                while (current.Next != null) current = current.Next;
+                current.Next = node;
             }
 
             count++;
@@ -62,73 +53,53 @@ namespace Car
 
         public bool Remove(object key)
         {
-            int idx = GetIndex(key);
-            var cur = table[idx];
+            int index = GetIndex(key);
+            var current = table[index];
             Point<T> prev = null;
 
-            while (cur != null)
+            while (current != null)
             {
-                if (EqualsByKey(cur.Data, key))
+                if (EqualsByKey(current.Data, key))
                 {
                     // выкидываем узел из цепочки
-                    if (prev == null) table[idx] = cur.Next;
-                    else              prev.Next = cur.Next;
+                    if (prev == null) table[index] = current.Next;
+                    else prev.Next = current.Next;
                     count--;
                     return true;
                 }
-                prev = cur;
-                cur  = cur.Next;
+                prev = current;
+                current = current.Next;
             }
             return false;
         }
 
         public T Find(object key)
         {
-            int idx = GetIndex(key);
-            var cur = table[idx];
-            while (cur != null)
+            int index = GetIndex(key);
+            var current = table[index];
+            while (current != null)
             {
-                if (EqualsByKey(cur.Data, key))
-                    return cur.Data;
-                cur = cur.Next;
+                if (EqualsByKey(current.Data, key))
+                    return current.Data;
+                current = current.Next;
             }
             return default;
         }
 
         public bool Contains(T item)
         {
-            // просто прямое сравнение по Equals
+            // Прямое сравнение по Equals
             foreach (var head in table)
             {
-                var cur = head;
-                while (cur != null)
+                var current = head;
+                while (current != null)
                 {
-                    if (cur.Data.Equals(item))
+                    if (current.Data.Equals(item))
                         return true;
-                    cur = cur.Next;
+                    current = current.Next;
                 }
             }
             return false;
-        }
-
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            if (array == null) throw new ArgumentNullException();
-            if (arrayIndex < 0 || arrayIndex >= array.Length)
-                throw new ArgumentOutOfRangeException();
-
-            int i = arrayIndex;
-            foreach (var head in table)
-            {
-                var cur = head;
-                while (cur != null)
-                {
-                    if (i >= array.Length)
-                        throw new ArgumentException("Массив мал");
-                    array[i++] = cur.Data;
-                    cur = cur.Next;
-                }
-            }
         }
 
         public void Clear()
@@ -142,34 +113,25 @@ namespace Car
             for (int i = 0; i < size; i++)
             {
                 Console.Write($"[{i}]: ");
-                var cur = table[i];
-                while (cur != null)
+                var current = table[i];
+                while (current != null)
                 {
-                    Console.Write($"{cur} -> ");
-                    cur = cur.Next;
+                    Console.Write($"{current} -> ");
+                    current = current.Next;
                 }
                 Console.WriteLine("null");
             }
         }
 
+        // Сравниваем ключи по CarId
         private bool EqualsByKey(T data, object key)
         {
-            // Берём CarId или Id
-            var prop = data.GetType().GetProperty("CarId") ??
-                       data.GetType().GetProperty("Id");
-            if (prop != null)
-            {
-                var val = prop.GetValue(data);
-                // Сравниваем IdNumber==IdNumber
-                if (key is IdNumber idObj && val is IdNumber idVal)
-                    return idObj.Number == idVal.Number;
-                // Сравниваем int ключ с val.Number
-                if (key is int num && val is IdNumber id2)
-                    return num == id2.Number;
-                return val?.Equals(key) ?? false;
-            }
-            // fallback — напрямую
-            return data.Equals(key);
+            var val = ((Car)(object)data).CarId;
+            
+            if (key is int num && val is IdNumber id2)
+                return num == id2.Number;
+
+            return val?.Equals(key) ?? false;
         }
     }
 }
