@@ -1,3 +1,5 @@
+using System;
+
 namespace Car
 {
     public class MyHashTable<T>
@@ -6,8 +8,14 @@ namespace Car
         {
             public T Data { get; set; }
             public Point<T> Next { get; set; }
-            public Point(T data) { Data = data; Next = null; }
-            public override string ToString() => Data.ToString();
+
+            public Point(T data)
+            {
+                Data = data;
+                Next = null;
+            }
+
+            public override string ToString() => Data?.ToString();
         }
 
         private Point<T>[] table;
@@ -23,28 +31,24 @@ namespace Car
 
         public int Count => count;
 
-        // Извлекаем ключ из объекта по свойству CarId
-        private object GetKey(T item)
-        {
-            return ((Car)(object)item).CarId;
-        }
-
-        // Хешируем именно ключ (CarId)
-        private int GetIndex(object key)
-            => Math.Abs(key.GetHashCode()) % size;
+        // Хеш-функция по объекту целиком
+        private int GetIndex(T item)
+            => Math.Abs(item?.GetHashCode() ?? 0) % size;
 
         public void Add(T item)
         {
-            var key = GetKey(item);
-            int index = GetIndex(key);
+            int index = GetIndex(item);
             var node = new Point<T>(item);
 
             if (table[index] == null)
+            {
                 table[index] = node;
+            }
             else
             {
                 var current = table[index];
-                while (current.Next != null) current = current.Next;
+                while (current.Next != null)
+                    current = current.Next;
                 current.Next = node;
             }
 
@@ -53,48 +57,52 @@ namespace Car
 
         public bool Remove(object key)
         {
-            int index = GetIndex(key);
-            var current = table[index];
-            Point<T> prev = null;
-
-            while (current != null)
+            for (int i = 0; i < size; i++)
             {
-                if (EqualsByKey(current.Data, key))
+                var current = table[i];
+                Point<T> prev = null;
+
+                while (current != null)
                 {
-                    // выкидываем узел из цепочки
-                    if (prev == null) table[index] = current.Next;
-                    else prev.Next = current.Next;
-                    count--;
-                    return true;
+                    if (EqualsByKey(current.Data, key))
+                    {
+                        if (prev == null) table[i] = current.Next;
+                        else prev.Next = current.Next;
+                        count--;
+                        return true;
+                    }
+
+                    prev = current;
+                    current = current.Next;
                 }
-                prev = current;
-                current = current.Next;
             }
             return false;
         }
 
         public T Find(object key)
         {
-            int index = GetIndex(key);
-            var current = table[index];
-            while (current != null)
+            for (int i = 0; i < size; i++)
             {
-                if (EqualsByKey(current.Data, key))
-                    return current.Data;
-                current = current.Next;
+                var current = table[i];
+                while (current != null)
+                {
+                    if (EqualsByKey(current.Data, key))
+                        return current.Data;
+
+                    current = current.Next;
+                }
             }
             return default;
         }
 
         public bool Contains(T item)
         {
-            // Прямое сравнение по Equals
             foreach (var head in table)
             {
                 var current = head;
                 while (current != null)
                 {
-                    if (current.Data.Equals(item))
+                    if (current.Data?.Equals(item) == true)
                         return true;
                     current = current.Next;
                 }
@@ -123,15 +131,20 @@ namespace Car
             }
         }
 
-        // Сравниваем ключи по CarId
+        // Сравнение по ключу (используется для поиска/удаления)
         private bool EqualsByKey(T data, object key)
         {
-            var val = ((Car)(object)data).CarId;
-            
-            if (key is int num && val is IdNumber id2)
-                return num == id2.Number;
+            if (data is Car car)
+            {
+                var val = car.CarId;
 
-            return val?.Equals(key) ?? false;
+                if (key is int num && val is IdNumber id2)
+                    return num == id2.Number;
+
+                return val?.Equals(key) ?? false;
+            }
+
+            return false;
         }
     }
 }
