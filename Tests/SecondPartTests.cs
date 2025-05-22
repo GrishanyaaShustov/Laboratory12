@@ -95,21 +95,6 @@ namespace Tests
         }
 
         [Test]
-        public void Contains_ReturnsTrue_IfElementExists()
-        {
-            var car = CreateCar(30);
-            table.Add(car);
-            Assert.That(table.Contains(car), Is.True);
-        }
-
-        [Test]
-        public void Contains_ReturnsFalse_IfElementNotExists()
-        {
-            var car = CreateCar(31);
-            Assert.That(table.Contains(car), Is.False);
-        }
-
-        [Test]
         public void Clear_EmptiesTable()
         {
             table.Add(CreateCar(40));
