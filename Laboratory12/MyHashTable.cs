@@ -30,8 +30,7 @@ namespace Car
         }
 
         public int Count => count;
-
-        // Хеш-функция по объекту целиком
+        
         private int GetIndex(T item)
             => Math.Abs(item?.GetHashCode() ?? 0) % size;
 
@@ -95,21 +94,6 @@ namespace Car
             return default;
         }
 
-        public bool Contains(T item)
-        {
-            foreach (var head in table)
-            {
-                var current = head;
-                while (current != null)
-                {
-                    if (current.Data?.Equals(item) == true)
-                        return true;
-                    current = current.Next;
-                }
-            }
-            return false;
-        }
-
         public void Clear()
         {
             table = new Point<T>[size];
@@ -131,7 +115,6 @@ namespace Car
             }
         }
 
-        // Сравнение по ключу (используется для поиска/удаления)
         private bool EqualsByKey(T data, object key)
         {
             if (data is Car car)
