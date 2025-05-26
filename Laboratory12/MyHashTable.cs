@@ -2,23 +2,30 @@ using System;
 
 namespace Car
 {
-    public class MyHashTable<T>
+    
+    public class Point<T>
     {
-        public class Point<T>
+        public T Data { get; set; }
+        public Point<T> Next { get; set; }
+
+        public Point(T data)
         {
-            public T Data { get; set; }
-            public Point<T> Next { get; set; }
-
-            public Point(T data)
-            {
-                Data = data;
-                Next = null;
-            }
-
-            public override string ToString() => Data?.ToString();
+            Data = data;
+            Next = null;
         }
 
-        private Point<T>[] table;
+        public override string ToString() => Data?.ToString();
+        public override int GetHashCode()
+        {
+            if (Data is Car car && car.CarId != null)
+                return car.CarId.GetHashCode();
+            return 0;
+        }
+    }
+    public class MyHashTable<T>
+    {
+
+        public Point<T>[] table;
         private int size, count;
         private const int defaultLength = 10;
 
@@ -31,23 +38,23 @@ namespace Car
 
         public int Count => count;
         
-        private int GetIndex(T item)
-            => Math.Abs(item?.GetHashCode() ?? 0) % size;
+        private int GetIndex(Point<T> point)
+            => Math.Abs(point?.GetHashCode() ?? 0) % size;
+        
+        private int GetIndex(object key)
+            => Math.Abs(key?.GetHashCode() ?? 0) % size;
 
         public void Add(T item)
         {
-            int index = GetIndex(item);
             var node = new Point<T>(item);
+            int index = GetIndex(node);
 
             if (table[index] == null)
-            {
                 table[index] = node;
-            }
             else
             {
                 var current = table[index];
-                while (current.Next != null)
-                    current = current.Next;
+                while (current.Next != null) current = current.Next;
                 current.Next = node;
             }
 
@@ -56,41 +63,44 @@ namespace Car
 
         public bool Remove(object key)
         {
-            for (int i = 0; i < size; i++)
+            int index = GetIndex(key);
+
+            var current = table[index];
+            Point<T> prev = null;
+
+            while (current != null)
             {
-                var current = table[i];
-                Point<T> prev = null;
-
-                while (current != null)
+                if (EqualsByKey(current.Data, key))
                 {
-                    if (EqualsByKey(current.Data, key))
-                    {
-                        if (prev == null) table[i] = current.Next;
-                        else prev.Next = current.Next;
-                        count--;
-                        return true;
-                    }
+                    if (prev == null)
+                        table[index] = current.Next;
+                    else
+                        prev.Next = current.Next;
 
-                    prev = current;
-                    current = current.Next;
+                    count--;
+                    return true;
                 }
+
+                prev = current;
+                current = current.Next;
             }
+
             return false;
         }
 
         public T Find(object key)
         {
-            for (int i = 0; i < size; i++)
-            {
-                var current = table[i];
-                while (current != null)
-                {
-                    if (EqualsByKey(current.Data, key))
-                        return current.Data;
+            int index = GetIndex(key);
 
-                    current = current.Next;
-                }
+            var current = table[index];
+            while (current != null)
+            {
+                if (EqualsByKey(current.Data, key))
+                    return current.Data;
+
+                current = current.Next;
             }
+
             return default;
         }
 
@@ -98,21 +108,6 @@ namespace Car
         {
             table = new Point<T>[size];
             count = 0;
-        }
-
-        public void PrintHS()
-        {
-            for (int i = 0; i < size; i++)
-            {
-                Console.Write($"[{i}]: ");
-                var current = table[i];
-                while (current != null)
-                {
-                    Console.Write($"{current} -> ");
-                    current = current.Next;
-                }
-                Console.WriteLine("null");
-            }
         }
 
         private bool EqualsByKey(T data, object key)
