@@ -106,5 +106,14 @@ namespace Tests
                 Assert.That(table.Find(40), Is.Null);
             });
         }
+        
+        [Test]
+        public void Add_ElementCanBeFoundAfterAdd()
+        {
+            var car = CreateCar(100);
+            table.Add(car);
+            var found = table.Find(100);
+            Assert.That(found, Is.SameAs(car));
+        }
     }
 }
