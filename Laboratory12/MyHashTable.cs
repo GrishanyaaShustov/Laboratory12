@@ -2,7 +2,7 @@ using System;
 
 namespace Car
 {
-    
+    // Узел связного списка для хранения элемента и ссылки на следующий
     public class Point<T>
     {
         public T Data { get; set; }
@@ -15,16 +15,14 @@ namespace Car
         }
 
         public override string ToString() => Data?.ToString();
-        public override int GetHashCode()
-        {
-            if (Data is Car car && car.CarId != null)
-                return car.CarId.GetHashCode();
-            return 0;
-        }
+
+        // Возвращает хэш-код объекта Data
+        public override int GetHashCode() => Data?.GetHashCode() ?? 0;
     }
+
+    // Обобщённая хеш-таблица с методом цепочек
     public class MyHashTable<T>
     {
-
         public Point<T>[] table;
         private int size, count;
         private const int defaultLength = 10;
@@ -37,22 +35,22 @@ namespace Car
         }
 
         public int Count => count;
-        
+
+        // Вычисляет индекс ячейки по хэш-коду
         private int GetIndex(Point<T> point)
             => Math.Abs(point?.GetHashCode() ?? 0) % size;
-        
-        private int GetIndex(object key)
-            => Math.Abs(key?.GetHashCode() ?? 0) % size;
 
+        // Добавляет элемент в таблицу
         public void Add(T item)
         {
             var node = new Point<T>(item);
             int index = GetIndex(node);
 
             if (table[index] == null)
-                table[index] = node;
+                table[index] = node; // Если ячейка пуста — вставляем
             else
             {
+                // Иначе добавляем в конец цепочки
                 var current = table[index];
                 while (current.Next != null) current = current.Next;
                 current.Next = node;
@@ -61,55 +59,63 @@ namespace Car
             count++;
         }
 
+        // Удаление элемент по ключу
         public bool Remove(object key)
         {
-            int index = GetIndex(key);
-
-            var current = table[index];
-            Point<T> prev = null;
-
-            while (current != null)
+            for (int i = 0; i < size; i++)
             {
-                if (EqualsByKey(current.Data, key))
+                var current = table[i];
+                Point<T> prev = null;
+
+                while (current != null)
                 {
-                    if (prev == null)
-                        table[index] = current.Next;
-                    else
-                        prev.Next = current.Next;
+                    if (EqualsByKey(current.Data, key))
+                    {
+                        // Удаление головы или середины цепочки
+                        if (prev == null)
+                            table[i] = current.Next;
+                        else
+                            prev.Next = current.Next;
 
-                    count--;
-                    return true;
+                        count--;
+                        return true;
+                    }
+
+                    prev = current;
+                    current = current.Next;
                 }
-
-                prev = current;
-                current = current.Next;
             }
 
             return false;
         }
 
+        // Поиск элемента по ключу
         public T Find(object key)
         {
-            int index = GetIndex(key);
-
-            var current = table[index];
-            while (current != null)
+            for (int i = 0; i < size; i++)
             {
-                if (EqualsByKey(current.Data, key))
-                    return current.Data;
+                var current = table[i];
 
-                current = current.Next;
+                while (current != null)
+                {
+                    if (EqualsByKey(current.Data, key))
+                        return current.Data;
+
+                    current = current.Next;
+                }
             }
 
             return default;
         }
 
+        // Полная очистка таблицы
         public void Clear()
         {
             table = new Point<T>[size];
             count = 0;
         }
 
+        // Сравнение ключа с ключом объекта
         private bool EqualsByKey(T data, object key)
         {
             if (data is Car car)
