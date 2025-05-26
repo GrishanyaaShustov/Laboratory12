@@ -35,6 +35,7 @@ namespace Car
         }
 
         public int Count => count;
+        public int DefaultLength => defaultLength;
 
         // Вычисляет индекс ячейки по хэш-коду
         private int GetIndex(Point<T> point)
