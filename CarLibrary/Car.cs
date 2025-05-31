@@ -1,4 +1,4 @@
-﻿namespace Car
+namespace Car
 {
     public class Car : IInit, IComparable<Car>, ICloneable
     {
@@ -80,7 +80,7 @@
 
         public virtual void Show()
         {
-            Console.WriteLine($"Бренд: {Brand}, Год выпуска: {Year}, Цвет: {Color}, " +
+            Console.WriteLine($"Бренд: {Brand}, {CarId.ToString()}, Год выпуска: {Year}, Цвет: {Color}, " +
                               $"Стоимость: {Price:C}, Дорожный просвет: {Clearance} мм, ID: {CarId}");
         }
 
@@ -131,13 +131,13 @@
         
         public override string ToString()
         {
-            return $"Марка: {Brand}, Год выпуска: {Year}, Цвет: {Color}, Цена: {Price:C}, Дорожный просвет: {Clearance} см";
+            return $"Марка: {Brand}, {CarId.ToString()}, Год выпуска: {Year}, Цвет: {Color}, Цена: {Price:C}, Дорожный просвет: {Clearance} см";
         }
         
         public int CompareTo(Car other)
         {
             if (other == null) return 1;
-            return Price.CompareTo(other.Price);
+            return Year.CompareTo(other.Year);
         }
 
         public virtual void RandomInit()
@@ -165,9 +165,9 @@
 
             foreach (var car in cars)
             {
-                if (car.GetType() == typeof(BigCar)) // Используем typeof
+                if (car.GetType() == typeof(BigCar))
                 {
-                    BigCar bigCar = car as BigCar; // Используем as
+                    BigCar bigCar = car as BigCar;
                     if (mostExpensive == null || (bigCar != null && bigCar.Price > mostExpensive.Price))
                     {
                         mostExpensive = bigCar;
@@ -184,10 +184,10 @@
 
             foreach (var car in cars)
             {
-                if (car is LightCar) // Используем is
+                if (car is LightCar)
                 {
-                    LightCar lightCar = car as LightCar; // Используем as
-                    if (lightCar != null && lightCar.GetType() == typeof(LightCar)) // Проверяем typeof
+                    LightCar lightCar = car as LightCar;
+                    if (lightCar != null && lightCar.GetType() == typeof(LightCar))
                     {
                         totalSpeed += lightCar.MaxSpeed;
                         count++;
@@ -203,10 +203,10 @@
             int count = 0;
             foreach (var car in cars)
             {
-                if (car is DeliveryCar) // Используем is
+                if (car is DeliveryCar)
                 {
-                    DeliveryCar deliveryCar = car as DeliveryCar; // Используем as
-                    if (deliveryCar != null && deliveryCar.GetType() == typeof(DeliveryCar) && deliveryCar.LoadCapacity > loadThreshold) // Проверяем typeof
+                    DeliveryCar deliveryCar = car as DeliveryCar;
+                    if (deliveryCar != null && deliveryCar.GetType() == typeof(DeliveryCar) && deliveryCar.LoadCapacity > loadThreshold)
                     {
                         count++;
                     }
@@ -217,10 +217,10 @@
             int index = 0;
             foreach (var car in cars)
             {
-                if (car is DeliveryCar) // Используем is
+                if (car is DeliveryCar)
                 {
-                    DeliveryCar deliveryCar = car as DeliveryCar; // Используем as
-                    if (deliveryCar != null && deliveryCar.GetType() == typeof(DeliveryCar) && deliveryCar.LoadCapacity > loadThreshold) // Проверяем typeof
+                    DeliveryCar deliveryCar = car as DeliveryCar; 
+                    if (deliveryCar != null && deliveryCar.GetType() == typeof(DeliveryCar) && deliveryCar.LoadCapacity > loadThreshold)
                     {
                         result[index++] = deliveryCar;
                     }
